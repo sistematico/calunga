@@ -15,21 +15,21 @@ TOKEN = os.getenv('TOKEN')
 DOWNLOAD = 'downloads/'
 DAYS = 1
 
-# def send_action(action):
-#     """Sends `action` while processing func command."""
+def send_action(action):
+    """Sends `action` while processing func command."""
 
-#     def decorator(func):
-#         @wraps(func)
-#         def command_func(update, context, *args, **kwargs):
-#             context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
-#             return func(update, context,  *args, **kwargs)
-#         return command_func
+    def decorator(func):
+        @wraps(func)
+        def command_func(update, context, *args, **kwargs):
+            context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
+            return func(update, context,  *args, **kwargs)
+        return command_func
     
-#     return decorator
+    return decorator
 
-# send_typing_action = send_action(ChatAction.TYPING)
-# send_upload_video_action = send_action(ChatAction.UPLOAD_VIDEO)
-# send_upload_photo_action = send_action(ChatAction.UPLOAD_PHOTO)
+send_typing_action = send_action(ChatAction.TYPING)
+send_upload_video_action = send_action(ChatAction.UPLOAD_VIDEO)
+send_upload_photo_action = send_action(ChatAction.UPLOAD_PHOTO)
 
 def older(dir_path, n):
     all_files = os.listdir(dir_path)
@@ -44,13 +44,11 @@ def older(dir_path, n):
             os.remove(file_path)
             print("Deleted ", f)
 
-#@send_upload_video_action
 
+@send_upload_video_action
 def download(update: Update, context: CallbackContext):
     older(DOWNLOAD, DAYS)
-
     url = update.message.text
-
     messageId = update.message.message_id
     chatId = update.message.chat.id
 
@@ -64,6 +62,7 @@ def download(update: Update, context: CallbackContext):
         'youtube_include_dash_manifest': False,
         'socket_timeout': 10,
         'retries': 3,
+        'quiet': True,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
@@ -81,9 +80,11 @@ def download(update: Update, context: CallbackContext):
             try:
                 filename = open(ydl.prepare_filename(video), 'rb')
                 update.message.reply_video(filename, supports_streaming=True)
+                context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
+                #context.bot.delete_message(chat_id=chatId, message_id=messageId)
                 #update.message.send_video(filename, supports_streaming=True, quote=True)
                 #update.message.send_video(filename, supports_streaming=True)
-                #context.bot.send_video(filename, supports_streaming=True)
+                #context.bot.send_video(video=filename, supports_streaming=True)
             except IOError:
                 update.message.send_message('Impossível abrir o arquivo do vídeo.')
             finally:
@@ -91,18 +92,6 @@ def download(update: Update, context: CallbackContext):
 
         except:
             context.bot.send_message('Um erro ocorreu, tente novamente.')
-            #update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
-            #update.message.reply_text('Um erro ocorreu, tente novamente.')    
-
-        #update.message.send_message(print(vars(downloading)))
-        #context.bot.send_message(text=print(vars(downloading)))
-        #update.message.reply_text(print(downloading),quote=True)    
-        #context.bot.delete_message(downloading.message_id)
-        #context.bot.delete_message(chat_id=update.message.chat_id, downloading.message_id)
-        #context.bot.send_message(chat_id=print(vars(downloading)))
-
-        context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
-        context.bot.delete_message(chat_id=chatId, message_id=messageId)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
