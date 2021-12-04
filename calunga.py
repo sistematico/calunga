@@ -54,7 +54,7 @@ def download(update: Update, context: CallbackContext):
     messageId = update.message.message_id
     chatId = update.message.chat.id
 
-    context.bot.delete_message(chat_id=chatId, message_id=messageId)
+    #context.bot.delete_message(chat_id=chatId, message_id=messageId)
 
     opts = {
         'format': 'best',
@@ -101,6 +101,7 @@ def download(update: Update, context: CallbackContext):
         #context.bot.send_message(chat_id=print(vars(downloading)))
 
         context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
+        context.bot.delete_message(chat_id=chatId, message_id=messageId)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
