@@ -24,7 +24,7 @@ def download(update: Update, context: CallbackContext):
         'outtmpl': DOWNLOAD + '/%(title)s-%(id)s.%(ext)s',
     }
     with youtube_dl.YoutubeDL(opts) as ydl:
-        update.message.reply_text('Baixando: ' + url,quote=True)
+        update.message.reply_text('Baixando: ' + url,quote=True, disable_web_page_preview=True)
         try:
             # ydl.download([url])
             result = ydl.extract_info(url, download=True)
