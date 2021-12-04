@@ -1,5 +1,6 @@
 __pycache__
 .env
-downloads
 temp
 youtubedl.py
+downloads/*
+!downloads/.gitkeep 
