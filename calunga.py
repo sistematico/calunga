@@ -50,6 +50,8 @@ def download(update: Update, context: CallbackContext):
 
     url = update.message.text
 
+    print(update.message)
+
     opts = {
         'format': 'best',
         'ignoreerrors': True,
