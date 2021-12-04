@@ -81,9 +81,10 @@ def download(update: Update, context: CallbackContext):
             
             try:
                 filename = open(ydl.prepare_filename(video), 'rb')
-                update.message.reply_video(filename, supports_streaming=True)
+                #update.message.reply_video(filename, supports_streaming=True)
                 #update.message.send_video(filename, supports_streaming=True, quote=True)
-                #update.message.send_video(filename, supports_streaming=True, quote=True)
+                #update.message.send_video(filename, supports_streaming=True)
+                context.bot.send_video(filename, supports_streaming=True)
             except IOError:
                 update.message.send_message("Impossível abrir o arquivo do vídeo.")
             finally:
