@@ -84,7 +84,9 @@ def download(update: Update, context: CallbackContext):
         except:
             update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
 
-        context.bot.delete_message(downloading.message_id)
+        update.message.send_message(print(vars(downloading)))
+        #context.bot.delete_message(downloading.message_id)
+        #context.bot.delete_message(chat_id=update.message.chat_id, downloading.message_id)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
