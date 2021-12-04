@@ -35,7 +35,7 @@ def older(dir_path, n):
     all_files = os.listdir(dir_path)
     now = time.time()
     #max = n * 86400
-    max = 120
+    max = 240
     for f in all_files:
         file_path = os.path.join(dir_path, f)
         if not os.path.isfile(file_path):
@@ -84,7 +84,7 @@ def download(update: Update, context: CallbackContext):
         except:
             update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
 
-        context.bot.delete_message(downloading)
+        context.bot.delete_message(downloading.message_id)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
