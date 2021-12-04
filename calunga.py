@@ -45,6 +45,7 @@ def older(dir_path, n):
             print("Deleted ", f)
 
 #@send_upload_video_action
+
 def download(update: Update, context: CallbackContext):
     older(DOWNLOAD, DAYS)
 
@@ -80,8 +81,9 @@ def download(update: Update, context: CallbackContext):
             
             try:
                 filename = open(ydl.prepare_filename(video), 'rb')
-                #update.message.reply_video(filename, supports_streaming=True)
-                update.message.send_video(filename, supports_streaming=True, quote=True)
+                update.message.reply_video(filename, supports_streaming=True)
+                #update.message.send_video(filename, supports_streaming=True, quote=True)
+                #update.message.send_video(filename, supports_streaming=True, quote=True)
             except IOError:
                 update.message.send_message("Impossível abrir o arquivo do vídeo.")
             finally:
