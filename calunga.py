@@ -64,8 +64,8 @@ def download(update: Update, context: CallbackContext):
     with youtube_dl.YoutubeDL(opts) as ydl:
         downloading = update.message.reply_text('Baixando: ' + url, quote=True, disable_web_page_preview=True)
 
-        print(vars(downloading))
-        print(downloading)
+        #print(vars(downloading))
+        #print(downloading)
 
         try:
             result = ydl.extract_info(url, download=True)
@@ -92,6 +92,9 @@ def download(update: Update, context: CallbackContext):
         #update.message.reply_text(print(downloading),quote=True)    
         #context.bot.delete_message(downloading.message_id)
         #context.bot.delete_message(chat_id=update.message.chat_id, downloading.message_id)
+        #context.bot.send_message(chat_id=print(vars(downloading)))
+
+        context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
