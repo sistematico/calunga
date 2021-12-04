@@ -9,6 +9,7 @@ systemctl daemon-reload
 
 if ! id "calunga" &>/dev/null; then
     useradd -m -r -d /var/calunga -s /bin/bash calunga
+    passwd calunga
 fi
 
 [ ! -f /etc/systemd/system/calunga.service ] && cp etc/systemd/system/calunga.service /etc/systemd/system/

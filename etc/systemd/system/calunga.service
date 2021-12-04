@@ -6,7 +6,7 @@ After=multi-user.target
 Type=idle
 Restart=on-failure
 User=ytdl
-WorkingDirectory=/var/calunga
+WorkingDirectory=/var/calunga/bot
 ExecStart=/usr/bin/python3 calunga.py 2>&1
 
 [Install]
