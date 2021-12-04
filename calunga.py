@@ -44,13 +44,16 @@ def older(dir_path, n):
             os.remove(file_path)
             print("Deleted ", f)
 
-@send_upload_video_action
+#@send_upload_video_action
 def download(update: Update, context: CallbackContext):
     older(DOWNLOAD, DAYS)
 
     url = update.message.text
 
-    print(update.message)
+    messageId = update.message.message_id
+    chatId = update.message.chat.id
+
+    context.bot.delete_message(chat_id=chatId, message_id=messageId)
 
     opts = {
         'format': 'best',
@@ -60,14 +63,12 @@ def download(update: Update, context: CallbackContext):
         'youtube_include_dash_manifest': False,
         'socket_timeout': 8,
         'retries': 3,
+        'quiet': True,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
     with youtube_dl.YoutubeDL(opts) as ydl:
         downloading = update.message.reply_text('Baixando: ' + url, quote=True, disable_web_page_preview=True)
-
-        #print(vars(downloading))
-        #print(downloading)
 
         try:
             result = ydl.extract_info(url, download=True)
