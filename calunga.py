@@ -34,7 +34,13 @@ def download(update: Update, context: CallbackContext):
             else:
                 video = result
 
-            update.message.reply_text(ydl.prepare_filename(video),quote=True)
+            #update.message.reply_text(ydl.prepare_filename(video),quote=True)
+            #update.message.reply_video(ydl.prepare_filename(video),quote=True)
+            #update.message.reply_video(ydl.prepare_filename(video),quote=True)
+
+            #bot.send_video(chat_id=update.message.chat_id, video=open('output.mp4', 'rb'), supports_streaming=True)
+            update.message.reply_video(video=open(ydl.prepare_filename(video), 'rb'), supports_streaming=True)
+
         except:
             update.message.reply_text('Um erro ocorreu',quote=True)    
 
