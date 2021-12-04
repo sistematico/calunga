@@ -15,27 +15,27 @@ TOKEN = os.getenv('TOKEN')
 DOWNLOAD = 'downloads/'
 DAYS = 1
 
-def send_action(action):
-    """Sends `action` while processing func command."""
+# def send_action(action):
+#     """Sends `action` while processing func command."""
 
-    def decorator(func):
-        @wraps(func)
-        def command_func(update, context, *args, **kwargs):
-            context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
-            return func(update, context,  *args, **kwargs)
-        return command_func
+#     def decorator(func):
+#         @wraps(func)
+#         def command_func(update, context, *args, **kwargs):
+#             context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
+#             return func(update, context,  *args, **kwargs)
+#         return command_func
     
-    return decorator
+#     return decorator
 
-send_typing_action = send_action(ChatAction.TYPING)
-send_upload_video_action = send_action(ChatAction.UPLOAD_VIDEO)
-send_upload_photo_action = send_action(ChatAction.UPLOAD_PHOTO)
+# send_typing_action = send_action(ChatAction.TYPING)
+# send_upload_video_action = send_action(ChatAction.UPLOAD_VIDEO)
+# send_upload_photo_action = send_action(ChatAction.UPLOAD_PHOTO)
 
 def older(dir_path, n):
     all_files = os.listdir(dir_path)
     now = time.time()
-    #max = n * 86400
-    max = 240
+    max = n * 86400
+    #max = 360
     for f in all_files:
         file_path = os.path.join(dir_path, f)
         if not os.path.isfile(file_path):
@@ -91,7 +91,9 @@ def download(update: Update, context: CallbackContext):
                 filename.close()
 
         except:
-            update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
+            context.bot.send_message('Um erro ocorreu, tente novamente.')
+            #update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
+            #update.message.reply_text('Um erro ocorreu, tente novamente.')    
 
         #update.message.send_message(print(vars(downloading)))
         #context.bot.send_message(text=print(vars(downloading)))
