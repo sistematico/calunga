@@ -6,12 +6,29 @@ import os, time
 import youtube_dl
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, CallbackContext, Filters
+from functools import wraps
 from dotenv import load_dotenv
 
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
 DOWNLOAD = 'downloads/'
+
+def send_typing_action(func):
+    """Sends typing action while processing func command."""
+
+    @wraps(func)
+    def command_func(update, context, *args, **kwargs):
+        #context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=ChatAction.TYPING)
+        context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=ChatAction.UPLOAD_VIDEO)
+        return func(update, context,  *args, **kwargs)
+
+    return command_func
+
+# @send_typing_action
+# def my_handler(update, context):
+#     pass # Will send 'typing' action while processing the request.
+
 
 def older(dir_path, n):
     all_files = os.listdir(dir_path)
@@ -26,6 +43,7 @@ def older(dir_path, n):
             os.remove(file_path)
             print("Deleted ", f)
 
+@send_typing_action
 def download(update: Update, context: CallbackContext):
     older(DOWNLOAD, 7)
 
@@ -43,7 +61,8 @@ def download(update: Update, context: CallbackContext):
     }
 
     with youtube_dl.YoutubeDL(opts) as ydl:
-        update.message.reply_text('Baixando: ' + url, quote=True, disable_web_page_preview=True)
+        downloading = update.message.reply_text('Baixando: ' + url, quote=True, disable_web_page_preview=True)
+
         try:
             result = ydl.extract_info(url, download=True)
 
@@ -54,7 +73,8 @@ def download(update: Update, context: CallbackContext):
             
             try:
                 filename = open(ydl.prepare_filename(video), 'rb')
-                update.message.reply_video(filename, supports_streaming=True)
+                #update.message.reply_video(filename, supports_streaming=True)
+                update.message.send_video(filename, supports_streaming=True, quote=True)
             except IOError:
                 update.message.send_message("Impossível abrir o arquivo do vídeo.")
             finally:
@@ -62,6 +82,8 @@ def download(update: Update, context: CallbackContext):
 
         except:
             update.message.reply_text('Um erro ocorreu, tente novamente.',quote=True)    
+
+        context.bot.delete_message(downloading)
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
