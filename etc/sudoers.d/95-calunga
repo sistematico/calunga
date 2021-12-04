@@ -1,0 +1,1 @@
+calunga ALL = (root) NOPASSWD: /usr/bin/systemctl start calunga, /usr/bin/systemctl restart calunga, /usr/bin/systemctl stop calunga

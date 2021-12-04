@@ -1,0 +1,13 @@
+[Unit]
+Description=Calunga a YouTube DL Bot
+After=multi-user.target
+
+[Service]
+Type=idle
+Restart=on-failure
+User=ytdl
+WorkingDirectory=/var/calunga
+ExecStart=/usr/bin/python3 calunga.py 2>&1
+
+[Install]
+WantedBy=multi-user.target
