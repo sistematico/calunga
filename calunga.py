@@ -62,9 +62,9 @@ def download(update: Update, context: CallbackContext):
         'nooverwrites': True,
         'continuedl': True,
         'youtube_include_dash_manifest': False,
-        'socket_timeout': 8,
+        'socket_timeout': 10,
         'retries': 3,
-        'quiet': True,
+        'quiet': False,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
