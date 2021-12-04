@@ -86,7 +86,7 @@ def download(update: Update, context: CallbackContext):
 
         #update.message.send_message(print(vars(downloading)))
         #context.bot.send_message(text=print(vars(downloading)))
-        update.message.reply_text(print(vars(downloading)),quote=True)    
+        update.message.reply_text(print(downloading),quote=True)    
         #context.bot.delete_message(downloading.message_id)
         #context.bot.delete_message(chat_id=update.message.chat_id, downloading.message_id)
 
