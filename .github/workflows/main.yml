@@ -28,4 +28,4 @@ jobs:
         script: |
           cd ${{ secrets.PROJECT_PATH }}
           git pull
-          sudo /usr/bin/systemctl restart calunga
+          bash install.sh
