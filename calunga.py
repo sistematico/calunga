@@ -13,28 +13,29 @@ load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
 DOWNLOAD = 'downloads/'
+DAYS = 1
 
-def send_typing_action(func):
-    """Sends typing action while processing func command."""
+def send_action(action):
+    """Sends `action` while processing func command."""
 
-    @wraps(func)
-    def command_func(update, context, *args, **kwargs):
-        #context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=ChatAction.TYPING)
-        context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=ChatAction.UPLOAD_VIDEO)
-        return func(update, context,  *args, **kwargs)
+    def decorator(func):
+        @wraps(func)
+        def command_func(update, context, *args, **kwargs):
+            context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=action)
+            return func(update, context,  *args, **kwargs)
+        return command_func
+    
+    return decorator
 
-    return command_func
-
-# @send_typing_action
-# def my_handler(update, context):
-#     pass # Will send 'typing' action while processing the request.
-
+send_typing_action = send_action(ChatAction.TYPING)
+send_upload_video_action = send_action(ChatAction.UPLOAD_VIDEO)
+send_upload_photo_action = send_action(ChatAction.UPLOAD_PHOTO)
 
 def older(dir_path, n):
     all_files = os.listdir(dir_path)
     now = time.time()
     #max = n * 86400
-    max = 60
+    max = 120
     for f in all_files:
         file_path = os.path.join(dir_path, f)
         if not os.path.isfile(file_path):
@@ -43,9 +44,9 @@ def older(dir_path, n):
             os.remove(file_path)
             print("Deleted ", f)
 
-@send_typing_action
+@send_upload_video_action
 def download(update: Update, context: CallbackContext):
-    older(DOWNLOAD, 7)
+    older(DOWNLOAD, DAYS)
 
     url = update.message.text
 

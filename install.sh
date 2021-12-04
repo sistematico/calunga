@@ -18,4 +18,4 @@ if [ "$(systemctl is-active calunga)" == "inactive" ]; then
     [ "$EUID" -ne 0 ] && systemctl enable calunga || sudo systemctl enable calunga
 fi
 
-[ "$EUID" -ne 0 ] && systemctl restart calunga || sudo systemctl restart calunga
+#[ "$EUID" -ne 0 ] && systemctl restart calunga || sudo systemctl restart calunga
