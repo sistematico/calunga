@@ -5,7 +5,7 @@ After=multi-user.target
 [Service]
 Type=idle
 Restart=on-failure
-User=ytdl
+User=calunga
 WorkingDirectory=/var/calunga/bot
 #ExecStart=/usr/bin/python3 calunga.py 2>&1
 ExecStart=/usr/bin/python3 calunga.py 2> logs/kalunga.log
