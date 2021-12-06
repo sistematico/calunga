@@ -4,7 +4,7 @@
 import os, time
 import youtube_dl
 from telegram import Update, ChatAction
-from telegram.ext import Updater, MessageHandler, CallbackContext, Filters
+from telegram.ext import Updater, MessageHandler, CommandHandler, CallbackContext, Filters
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,6 +12,17 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 DOWNLOAD = 'downloads/'
 DAYS = 1
+
+def stop_and_restart():
+    """Gracefully stop the Updater and replace the current process with a new one"""
+    updater.stop()
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+def restart(update, context):
+    context.bot.deleteMessage(chat_id=update.message.chat_id, message_id=update.message.message_id)
+    #update.message.reply_text('Estou reiniciando...')
+    context.bot.send_message(update.message.chat_id, 'Estou reiniciando...')
+    Thread(target=stop_and_restart).start()
 
 def older(dir_path, n):
     all_files = os.listdir(dir_path)
@@ -77,6 +88,7 @@ def download(update: Update, context: CallbackContext):
 
 updater = Updater(TOKEN, use_context=True)
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
+updater.dispatcher.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@sistematico')))
 
 updater.start_polling()
 updater.idle()
