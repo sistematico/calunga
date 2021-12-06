@@ -4,3 +4,5 @@ temp
 youtubedl.py
 downloads/*
 !downloads/.gitkeep 
+logs/*
+!logs/.gitkeep 

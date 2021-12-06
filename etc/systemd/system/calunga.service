@@ -7,7 +7,8 @@ Type=idle
 Restart=on-failure
 User=ytdl
 WorkingDirectory=/var/calunga/bot
-ExecStart=/usr/bin/python3 calunga.py 2>&1
+#ExecStart=/usr/bin/python3 calunga.py 2>&1
+ExecStart=/usr/bin/python3 calunga.py 2> logs/kalunga.log
 
 [Install]
 WantedBy=multi-user.target

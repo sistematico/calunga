@@ -21,6 +21,8 @@ def older(dir_path, n):
         file_path = os.path.join(dir_path, f)
         if not os.path.isfile(file_path):
             continue
+        elif file_path.endswith(".gitkeep"):
+            continue
         if os.stat(file_path).st_mtime < now - max:
             os.remove(file_path)
 
@@ -32,15 +34,23 @@ def download(update: Update, context: CallbackContext):
     messageId = update.message.message_id
     chatId = update.message.chat.id
 
+    # opts = {
+    #     'format': 'best',
+    #     'ignoreerrors': True,
+    #     'nooverwrites': True,
+    #     'continuedl': True,
+    #     'youtube_include_dash_manifest': False,
+    #     'socket_timeout': 10,
+    #     'retries': 3,
+    #     'quiet': True,
+    #     'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
+    # }
+    
     opts = {
         'format': 'best',
-        'ignoreerrors': True,
-        'nooverwrites': True,
-        'continuedl': True,
-        'youtube_include_dash_manifest': False,
-        'socket_timeout': 10,
-        'retries': 3,
-        'quiet': True,
+        'socket_timeout': 20,
+        'retries': 5,
+        'quiet': False,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
