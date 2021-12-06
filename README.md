@@ -46,8 +46,8 @@ bash install.sh
 ## Bibliotecas usadas
 
 * https://github.com/python-telegram-bot/python-telegram-bot
-* https://pypi.org/project/python-dotenv/
-* https://github.com/nficano/pytube
+* https://pypi.org/project/youtube_dl
+* https://pypi.org/project/python-dotenv
 
 ## Ajude
 
