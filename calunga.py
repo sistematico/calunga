@@ -94,8 +94,9 @@ def download(update: Update, context: CallbackContext):
             update.message.send_message('Impossível abrir o arquivo do vídeo.')
 
 
-updater = Updater(TOKEN, use_context=True)
-updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
+updater = Updater(TOKEN, request_kwargs={'read_timeout': 10, 'connect_timeout': 15}, use_context=True)
+#updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
+updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download, run_async=True))
 updater.dispatcher.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@sistematico')))
 
 updater.start_polling()
