@@ -77,8 +77,16 @@ def download(update: Update, context: CallbackContext):
 
         if os.path.isfile(ydl.prepare_filename(video)):
             try:
-                filename = open(ydl.prepare_filename(video), 'rb')
-                update.message.reply_video(filename, supports_streaming=True)
+                videoFile = ydl.prepare_filename(video)
+                #filename = open(ydl.prepare_filename(video), 'rb')
+                
+                documento = context.bot.send_document(chat_id=chatId, document=open(videoFile, 'rb'))
+                fileId = documento.document.file_id
+
+                context.bot.send_document(chat_id=chatId, document=fileId)
+                
+                #update.message.reply_video(filename, supports_streaming=True)
+
                 context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
             except IOError:
                 update.message.send_message('Impossível abrir o arquivo do vídeo.')
