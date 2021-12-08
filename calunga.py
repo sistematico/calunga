@@ -60,7 +60,7 @@ def download(update: Update, context: CallbackContext):
     
     opts = {
         'format': 'best',
-        'socket_timeout': 60,
+        'socket_timeout': 120,
         'retries': 7,
         'quiet': False,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
@@ -69,35 +69,36 @@ def download(update: Update, context: CallbackContext):
     with youtube_dl.YoutubeDL(opts) as ydl:
         downloading = update.message.reply_text('Baixando...', quote=True, disable_web_page_preview=True)
         
-        result = ydl.extract_info(url, download=True)
+        result = ydl.extract_info(url, download=False)
 
         if 'entries' in result:
             video = result['entries'][0]
         else:
             video = result
 
+        print(video)
+
+        ydl.download([url])
+
         if os.path.isfile(ydl.prepare_filename(video)):
             try:
                 videoFile = open(ydl.prepare_filename(video), 'rb')
-                #filename = open(ydl.prepare_filename(video), 'rb')
-
-                print(videoFile)
                 
-                #documento = context.bot.send_document(timeout=3600, chat_id=chatId, document=open(videoFile, 'rb'))
-                #fileId = documento.document.file_id
+                documento = context.bot.send_document(timeout=10000, chat_id=chatId, document=open(videoFile, 'rb'))
+                fileId = documento.document.file_id
 
-                #context.bot.send_document(timeout=3600, chat_id=chatId, document=fileId)
+                context.bot.send_document(timeout=10000, chat_id=chatId, document=fileId)
                 
                 #update.message.reply_video(filename, supports_streaming=True)
 
-                #context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
+                context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
             except IOError:
                 update.message.send_message('Impossível abrir o arquivo do vídeo.')
         else:
             update.message.send_message('Impossível abrir o arquivo do vídeo.')
 
 
-updater = Updater(TOKEN, request_kwargs={'read_timeout': 30, 'connect_timeout': 60}, use_context=True)
+updater = Updater(TOKEN, request_kwargs={'read_timeout': 60, 'connect_timeout': 120}, use_context=True)
 #updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download, run_async=True))
 updater.dispatcher.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@sistematico')))
