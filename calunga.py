@@ -84,7 +84,7 @@ def download(update: Update, context: CallbackContext):
                 documento = context.bot.send_document(timeout=3600, chat_id=chatId, document=open(videoFile, 'rb'))
                 fileId = documento.document.file_id
 
-                context.bot.send_document(chat_id=chatId, document=fileId)
+                context.bot.send_document(timeout=3600, chat_id=chatId, document=fileId)
                 
                 #update.message.reply_video(filename, supports_streaming=True)
 
@@ -95,7 +95,7 @@ def download(update: Update, context: CallbackContext):
             update.message.send_message('Impossível abrir o arquivo do vídeo.')
 
 
-updater = Updater(TOKEN, request_kwargs={'read_timeout': 10, 'connect_timeout': 15}, use_context=True)
+updater = Updater(TOKEN, request_kwargs={'read_timeout': 30, 'connect_timeout': 60}, use_context=True)
 #updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download, run_async=True))
 updater.dispatcher.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@sistematico')))
