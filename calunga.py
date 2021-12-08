@@ -80,7 +80,7 @@ def download(update: Update, context: CallbackContext):
                 videoFile = ydl.prepare_filename(video)
                 #filename = open(ydl.prepare_filename(video), 'rb')
                 
-                documento = context.bot.send_document(chat_id=chatId, document=open(videoFile, 'rb'))
+                documento = context.bot.send_document(timeout=3600, chat_id=chatId, document=open(videoFile, 'rb'))
                 fileId = documento.document.file_id
 
                 context.bot.send_document(chat_id=chatId, document=fileId)
