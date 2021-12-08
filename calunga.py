@@ -25,16 +25,17 @@ def restart(update, context):
     Thread(target=stop_and_restart).start()
 
 def older(dir_path, n):
-    all_files = os.listdir(dir_path)
+    allFiles = os.listdir(dir_path)
     now = time.time()
-    max = n * 86400
-    for f in all_files:
+    maxSize = n * 86400
+    
+    for f in allFiles:
         file_path = os.path.join(dir_path, f)
         if not os.path.isfile(file_path):
             continue
         elif file_path.endswith(".gitkeep"):
             continue
-        if os.stat(file_path).st_mtime < now - max:
+        if os.stat(file_path).st_mtime < now - maxSize:
             os.remove(file_path)
 
 def download(update: Update, context: CallbackContext):
@@ -59,14 +60,14 @@ def download(update: Update, context: CallbackContext):
     
     opts = {
         'format': 'best',
-        'socket_timeout': 20,
-        'retries': 5,
-        'quiet': False,
+        'socket_timeout': 60,
+        'retries': 7,
+        'quiet': True,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
     with youtube_dl.YoutubeDL(opts) as ydl:
-        downloading = update.message.reply_text('Baixando: ' + url, quote=True, disable_web_page_preview=True)
+        downloading = update.message.reply_text('Baixando...', quote=True, disable_web_page_preview=True)
         
         result = ydl.extract_info(url, download=True)
 
