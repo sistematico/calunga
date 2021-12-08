@@ -62,7 +62,7 @@ def download(update: Update, context: CallbackContext):
         'format': 'best',
         'socket_timeout': 60,
         'retries': 7,
-        'quiet': True,
+        'quiet': False,
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
@@ -78,17 +78,19 @@ def download(update: Update, context: CallbackContext):
 
         if os.path.isfile(ydl.prepare_filename(video)):
             try:
-                videoFile = ydl.prepare_filename(video)
+                videoFile = open(ydl.prepare_filename(video), 'rb')
                 #filename = open(ydl.prepare_filename(video), 'rb')
-                
-                documento = context.bot.send_document(timeout=3600, chat_id=chatId, document=open(videoFile, 'rb'))
-                fileId = documento.document.file_id
 
-                context.bot.send_document(timeout=3600, chat_id=chatId, document=fileId)
+                print(videoFile)
+                
+                #documento = context.bot.send_document(timeout=3600, chat_id=chatId, document=open(videoFile, 'rb'))
+                #fileId = documento.document.file_id
+
+                #context.bot.send_document(timeout=3600, chat_id=chatId, document=fileId)
                 
                 #update.message.reply_video(filename, supports_streaming=True)
 
-                context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
+                #context.bot.delete_message(chat_id=downloading.chat.id, message_id=downloading.message_id)
             except IOError:
                 update.message.send_message('Impossível abrir o arquivo do vídeo.')
         else:
