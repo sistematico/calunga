@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-import os, time
+import os, sys, time
 import youtube_dl
-from telegram import Update, ChatAction
+from threading import Thread
+from telegram import Update
 from telegram.ext import Updater, MessageHandler, CommandHandler, CallbackContext, Filters
 from dotenv import load_dotenv
 
@@ -21,7 +22,7 @@ def stop_and_restart():
 def restart(update, context):
     context.bot.deleteMessage(chat_id=update.message.chat_id, message_id=update.message.message_id)
     #update.message.reply_text('Estou reiniciando...')
-    context.bot.send_message(update.message.chat_id, 'Estou reiniciando...')
+    #context.bot.send_message(update.message.chat_id, 'Estou reiniciando...')
     Thread(target=stop_and_restart).start()
 
 def older(dir_path, n):
@@ -38,7 +39,7 @@ def older(dir_path, n):
         if os.stat(file_path).st_mtime < now - maxSize:
             os.remove(file_path)
 
-def download(update: Update, context: CallbackContext):
+def download2(update: Update, context: CallbackContext):
     older(DOWNLOAD, DAYS)
 
     url = update.message.text
@@ -97,9 +98,40 @@ def download(update: Update, context: CallbackContext):
         else:
             update.message.send_message('Impossível abrir o arquivo do vídeo.')
 
+def notify(message, update: Update, context: CallbackContext):
+    context.bot.send_message(chat_id=update.message.chat_id, text=message)
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        notify('finished:\n' + d['filename'] + '\nsize: ' + str(round(d['total_bytes'] / 1024 / 1024,1)) + 'MB')
+    if d['status'] == 'error':
+        notify('error:\n' + d['filename'])
+
+def download(update: Update):
+    #older(DOWNLOAD, DAYS)
+
+    url = update.message.text
+
+    opts = {
+        'format': 'best',
+        'progress_hooks': [my_hook],
+        'ignoreerrors': True,
+        'nooverwrites': True,
+        'continuedl': True,
+        'youtube_include_dash_manifest': False,
+        'socket_timeout': 8,
+        'retries': 3,
+        'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
+    }
+
+    with youtube_dl.YoutubeDL(opts) as ydl:
+        update.message.reply_text('format:' + opts['format'] + '\ndownloading',quote=True)
+        try:
+            ydl.download([url])
+        except:
+            update.message.reply_text('Unexpected error occurred',quote=True)
 
 updater = Updater(TOKEN, request_kwargs={'read_timeout': 60, 'connect_timeout': 120}, use_context=True)
-#updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download))
 updater.dispatcher.add_handler(MessageHandler(Filters.entity('url'), download, run_async=True))
 updater.dispatcher.add_handler(CommandHandler('r', restart, filters=Filters.user(username='@sistematico')))
 
