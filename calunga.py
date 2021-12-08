@@ -107,7 +107,7 @@ def my_hook(d):
     if d['status'] == 'error':
         notify('error:\n' + d['filename'])
 
-def download(update: Update):
+def download(update: Update, context: CallbackContext):
     #older(DOWNLOAD, DAYS)
 
     url = update.message.text
