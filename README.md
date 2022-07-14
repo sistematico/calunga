@@ -17,13 +17,17 @@ Demo: [@calungabot](https://t.me/calungabot) on Telegram.
 
 ## Instalação & Configuração
 
-Este projeto usa as bibliotecas `python-telegram-bot` e `youtube_dl` para interagir com o Telegram e baixar os vídeos.
-A biblioteca `dotenv` tambem é usada para carregar as variáveis de ambiente.
+Este projeto usa as bibliotecas [python-telegram-bot](https://python-telegram-bot.org/) e [yt_dlp](https://github.com/yt-dlp/yt-dlp) para interagir com o Telegram e baixar os vídeos.
 
 Você pode instalar todas as bibliotecas necessárias com o comando:
 
 ```
-pip install python-telegram-bot youtube_dl python-dotenv
+pip install python-telegram-bot yt-dlp
+```
+ou
+
+```
+pip install -r requirements.txt
 ```
 
 Adicionar o usuário e criar a unidade SystemD com o comando(como root):
@@ -42,12 +46,11 @@ bash install.sh
 5. Envie um link do Youtube para ele: [@calungabot](https://t.me/calungabot)
 
 
-
 ## Bibliotecas usadas
 
 * https://github.com/python-telegram-bot/python-telegram-bot
-* https://pypi.org/project/youtube_dl
-* https://pypi.org/project/python-dotenv
+* https://pypi.org/project/yt-dlp
+
 
 ## Ajude
 

@@ -2,15 +2,14 @@
 # coding: utf-8
 
 import os, sys, time
-import youtube_dl
+import yt_dlp
 from threading import Thread
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, CommandHandler, CallbackContext, Filters
-from dotenv import load_dotenv
+from uuid import uuid4
 
-load_dotenv()
-
-TOKEN = os.getenv('TOKEN')
+# TOKEN = os.getenv('TOKEN')
+TOKEN = '5004803393:AAHafDzu7tne5C39zJvEgbiQrktV_mT9wmo'
 DOWNLOAD = 'downloads/'
 DAYS = 1
 
@@ -32,6 +31,7 @@ def older(dir_path, n):
     
     for f in allFiles:
         file_path = os.path.join(dir_path, f)
+
         if not os.path.isfile(file_path):
             continue
         elif file_path.endswith(".gitkeep"):
@@ -43,9 +43,9 @@ def download2(update: Update, context: CallbackContext):
     older(DOWNLOAD, DAYS)
 
     url = update.message.text
-    
-    messageId = update.message.message_id
     chatId = update.message.chat.id
+    
+    # messageId = update.message.message_id
 
     # opts = {
     #     'format': 'best',
@@ -67,7 +67,7 @@ def download2(update: Update, context: CallbackContext):
         'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
     }
 
-    with youtube_dl.YoutubeDL(opts) as ydl:
+    with yt_dlp.YoutubeDL(opts) as ydl:
         downloading = update.message.reply_text('Baixando...', quote=True, disable_web_page_preview=True)
         
         result = ydl.extract_info(url, download=False)
@@ -98,7 +98,7 @@ def download2(update: Update, context: CallbackContext):
         else:
             update.message.send_message('Impossível abrir o arquivo do vídeo.')
 
-def notify(message, update: Update, context: CallbackContext):
+def notify(update: Update, context: CallbackContext, message):
     context.bot.send_message(chat_id=update.message.chat_id, text=message)
 
 def my_hook(d):
@@ -107,27 +107,56 @@ def my_hook(d):
     if d['status'] == 'error':
         notify('error:\n' + d['filename'])
 
+def extractYt(yturl: str) -> tuple[str, str]:
+    ydl = yt_dlp.YoutubeDL()
+    with ydl:
+        r = ydl.extract_info(yturl, download=False)
+        assert isinstance(r, dict)
+        return r['title'], r['thumbnail']
+
 def download(update: Update, context: CallbackContext):
     #older(DOWNLOAD, DAYS)
 
     url = update.message.text
+    unique_id = str(uuid4().int)
+    name, thumbnail = extractYt(url)
+
+    media_name = DOWNLOAD + f"{unique_id}.mp4",
+
+    # opts = {
+    #     'format': 'best',
+    #     'progress_hooks': [my_hook],
+    #     'ignoreerrors': True,
+    #     'nooverwrites': True,
+    #     'continuedl': True,
+    #     'youtube_include_dash_manifest': False,
+    #     'socket_timeout': 8,
+    #     'retries': 3,
+    #     'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
+    # }
 
     opts = {
         'format': 'best',
-        'progress_hooks': [my_hook],
         'ignoreerrors': True,
         'nooverwrites': True,
         'continuedl': True,
         'youtube_include_dash_manifest': False,
         'socket_timeout': 8,
         'retries': 3,
-        'outtmpl': DOWNLOAD + '%(title)s-%(id)s.%(ext)s',
+        'outtmpl': DOWNLOAD + f"{unique_id}.%(ext)s",
     }
 
-    with youtube_dl.YoutubeDL(opts) as ydl:
+    with yt_dlp.YoutubeDL(opts) as ydl:
         update.message.reply_text('format:' + opts['format'] + '\ndownloading',quote=True)
         try:
             ydl.download([url])
+
+            with open(media_name, mode='rb') as video_file:
+                update.effective_message.reply_document(document=video_file,
+                                                        filename=name + ".mp4",
+                                                        caption=name,
+                                                        thumb=thumbnail,
+                                                        quote=True)            
         except:
             update.message.reply_text('Unexpected error occurred',quote=True)
 
